@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFE GIDA SATIŞ MAKBUZU</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 15px; background: #f4f4f4; max-width: 900px; margin: auto; position: relative; }
+    h3, h4 { text-align: center; text-transform: uppercase; }
+    .input-group { margin-bottom: 10px; }
+    input, textarea, select { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; text-transform: uppercase; }
+    button { padding: 12px; font-size: 16px; border: none; border-radius: 6px; color: white; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+    .footer-buttons { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+    .footer-buttons button { flex: 1 1 32%; }
+    table { width: 100%; border-collapse: collapse; background: white; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px; }
+    #toplam { font-weight: bold; font-size: 16px; margin-top: 10px; text-align: right; }
+    .btn-blue { background-color: #007bff; }
+    .btn-green { background-color: #28a745; }
+    .btn-orange { background-color: #fd7e14; }
+    .btn-red { background-color: #dc3545; }
+    .timestamp { position: absolute; top: 10px; right: 20px; font-size: 12px; color: #555; }
+    .voice-btn { margin-top: 5px; background-color: #6f42c1; width: 100%; }
+    .top-row { display: flex; gap: 5px; flex-wrap: wrap; }
+    .top-row .input-group { flex: 1; }
+    .toolbox { margin-top: 20px; text-align: center; }
+    .toolbox button { margin: 5px; padding: 10px 20px; background-color: #343a40; }
+  </style>
+</head>
+<body>
+  <div class="timestamp" id="zaman"></div>
+  <h3>EFE GIDA SATIŞ MAKBUZU</h3>
+
+  <div class="top-row">
+    <div class="input-group">
+      <label for="musteriAd">MÜŞTERİ ADI</label>
+      <input type="text" id="musteriAd" placeholder="MÜŞTERİ ADI" list="musteriList">
+      <datalist id="musteriList">
+        <option value="AHMET BAKKAL">
+        <option value="MEHMET MARKET">
+        <option value="AYŞE ŞARKÜTERİ">
+      </datalist>
+    </div>
+    <div class="input-group">
+      <label for="musteriTel">TELEFON</label>
+      <input type="text" id="musteriTel" placeholder="TELEFON">
+    </div>
+    <div class="input-group">
+      <label for="musteriAdres">ADRES</label>
+      <input type="text" id="musteriAdres" placeholder="ADRES">
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label for="faturaNotu">FATURA NOTU</label>
+    <textarea id="faturaNotu" placeholder="FATURA NOTU (İSTEĞE BAĞLI)"></textarea>
+  </div>
+
+  <h4>ÜRÜN EKLE</h4>
+  <div class="input-group">
+    <label for="urunAd">ÜRÜN ADI</label>
+    <input type="text" id="urunAd" placeholder="ÜRÜN ADI" list="urunList">
+    <datalist id="urunList">
+      <option value="SU">
+      <option value="KOLA">
+      <option value="CİPS">
+      <option value="BİSKÜVİ">
+      <option value="ŞEKER">
+      <option value="ÇAY">
+      <option value="KAHVE">
+      <option value="DETERJAN">
+      <option value="YAĞ">
+      <option value="PEYNİR">
+    </datalist>
+  </div>
+  <div class="input-group">
+    <label for="paketSayisi">PAKET SAYISI</label>
+    <input type="text" id="paketSayisi" placeholder="PAKET">
+  </div>
+  <div class="input-group">
+    <label for="urunAdet">ADET</label>
+    <input type="number" id="urunAdet" value="1" placeholder="ADET">
+  </div>
+  <div class="input-group">
+    <label for="urunFiyat">FİYAT (TL)</label>
+    <input type="number" id="urunFiyat" value="0" placeholder="FİYAT">
+  </div>
+
+  <button class="btn-blue" onclick="urunEkle()">ÜRÜN EKLE</button>
+  <button class="voice-btn" onclick="sesleUrunEkle()">🎤 SESLE ÜRÜN EKLE</button>
+
+  <h4>ÜRÜNLER</h4>
+  <table id="urunlerTablosu">
+    <thead>
+      <tr><th>ÜRÜN ADI</th><th>PAKET</th><th>ADET</th><th>FİYAT</th><th>TOPLAM</th><th>İŞLEM</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div id="toplam">TOPLAM: 0 TL</div>
+
+  <div class="footer-buttons">
+    <button class="btn-green" onclick="satisiKaydet()">SATIŞI KAYDET</button>
+    <button class="btn-blue" onclick="yazdir()">YAZDIR</button>
+    <button class="btn-orange" onclick="excelKaydet()">EXCEL</button>
+    <button class="btn-green" onclick="whatsapp()">WHATSAPP</button>
+  </div>
+
+  <h4>ÜRÜN GÖRSELLERİ</h4>
+  <a href="https://photos.app.goo.gl/LWBCCZkfv7fxBHKu8" target="_blank">
+    <button class="btn-red">ÜRÜN GÖRSELLERİ</button>
+  </a>
+
+  <div class="toolbox">
+    <button onclick="window.location.reload()">🔄 YENİ SATIŞ</button>
+    <button onclick="hesapMakinesi()">🧮 HESAP MAKİNESİ</button>
+    <button onclick="eskiSatislar()">📁 ESKİ SATIŞLAR</button>
+  </div>
+
+  <script>
+    let urunler = [];
+
+    function urunEkle() {
+      const urunAd = document.getElementById("urunAd").value.toUpperCase();
+      const urunAdet = parseInt(document.getElementById("urunAdet").value);
+      const urunFiyat = parseFloat(document.getElementById("urunFiyat").value);
+      const paket = document.getElementById("paketSayisi").value.toUpperCase() || "-";
+      const toplam = urunAdet * urunFiyat;
+      if (!urunAd || urunAdet <= 0 || urunFiyat <= 0) {
+        alert("LÜTFEN GEÇERLİ BİR ÜRÜN, ADET VE FİYAT GİRİN");
+        return;
+      }
+      urunler.push({ urunAd, paket, urunAdet, urunFiyat, toplam });
+      renderTablo(); resetUrunGirdisi();
+    }
+
+    function renderTablo() {
+      const tablo = document.getElementById("urunlerTablosu").getElementsByTagName('tbody')[0];
+      tablo.innerHTML = "";
+      let genelToplam = 0;
+      urunler.forEach((urun, index) => {
+        const row = tablo.insertRow();
+        row.insertCell(0).innerText = urun.urunAd;
+        row.insertCell(1).innerText = urun.paket;
+        row.insertCell(2).innerText = urun.urunAdet;
+        row.insertCell(3).innerText = urun.urunFiyat.toFixed(2);
+        row.insertCell(4).innerText = urun.toplam.toFixed(2);
+        row.insertCell(5).innerHTML = `<button onclick="silUrun(${index})">SİL</button>`;
+        genelToplam += urun.toplam;
+      });
+      document.getElementById("toplam").innerText = `TOPLAM: ${genelToplam.toFixed(2)} TL`;
+    }
+
+    function resetUrunGirdisi() {
+      document.getElementById("urunAd").value = "";
+      document.getElementById("urunAdet").value = "1";
+      document.getElementById("urunFiyat").value = "0";
+      document.getElementById("paketSayisi").value = "";
+    }
+
+    function silUrun(index) {
+      urunler.splice(index, 1);
+      renderTablo();
+    }
+
+    function yazdir() {
+      const saat = new Date().toLocaleString();
+      const musteriAd = document.getElementById("musteriAd").value;
+      const musteriTel = document.getElementById("musteriTel").value;
+      const musteriAdres = document.getElementById("musteriAdres").value;
+      const not = document.getElementById("faturaNotu").value;
+      let tablo = `<table style="width:100%; border-collapse: collapse;" border="1"><thead><tr><th>ÜRÜN</th><th>PAKET</th><th>ADET</th><th>FİYAT</th><th>TOPLAM</th></tr></thead><tbody>`;
+      urunler.forEach(u => {
+        tablo += `<tr><td><strong>${u.urunAd}</strong></td><td>${u.paket}</td><td>${u.urunAdet}</td><td>${u.urunFiyat}</td><td>${u.toplam}</td></tr>`;
+      });
+      tablo += `</tbody></table>`;
+      const toplam = urunler.reduce((sum, u) => sum + u.toplam, 0);
+      const win = window.open('', '', 'width=600,height=800');
+      win.document.write(`<html><body style="font-family:Arial;">`);
+      win.document.write(`<h3 style="text-align:center;">EFE GIDA SATIŞ MAKBUZU</h3>`);
+      win.document.write(`<p style="text-align:center;">Efkan Efe 0541 678 84 10</p>`);
+      win.document.write(`<p><strong>TARİH:</strong> ${saat}</p>`);
+      win.document.write(`<p><strong>MÜŞTERİ:</strong> ${musteriAd}<br><strong>TELEFON:</strong> ${musteriTel}<br><strong>ADRES:</strong> ${musteriAdres}</p>`);
+      win.document.write(tablo);
+      win.document.write(`<p><strong>GENEL TOPLAM:</strong> ${toplam.toFixed(2)} TL</p>`);
+      win.document.write(`<p>${not}</p>`);
+      win.document.write(`<p style="text-align:center;">TEŞEKKÜR EDERİZ</p>`);
+      win.document.write(`</body></html>`);
+      win.document.close();
+      win.print();
+    }
+
+    function excelKaydet() {
+      const ws = XLSX.utils.table_to_sheet(document.getElementById('urunlerTablosu'));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Fatura");
+      XLSX.writeFile(wb, "Fatura.xlsx");
+    }
+
+    function whatsapp() {
+      const tel = document.getElementById("musteriTel").value;
+      const ad = document.getElementById("musteriAd").value;
+      const mesaj = encodeURIComponent(`Merhaba ${ad}, faturanızı aşağıda bulabilirsiniz.`);
+      const url = `https://wa.me/${tel}?text=${mesaj}`;
+      window.open(url, '_blank');
+    }
+
+    function satisiKaydet() {
+      localStorage.setItem("satisData", JSON.stringify(urunler));
+      alert("SATIŞ YEREL OLARAK KAYDEDİLDİ");
+    }
+
+    function sesleUrunEkle() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "tr-TR";
+      recognition.start();
+      recognition.onresult = function(event) {
+        document.getElementById("urunAd").value = event.results[0][0].transcript.toUpperCase();
+      };
+      recognition.onerror = function() {
+        alert("SES TANIMA BAŞARISIZ");
+      };
+    }
+
+    function hesapMakinesi() {
+      window.open("https://www.google.com/search?q=hesap+makinesi", "_blank");
+    }
+
+    function eskiSatislar() {
+      alert("ESKİ SATIŞLAR: YAKINDA ENTEGRE EDİLECEK");
+    }
+
+    setInterval(() => {
+      document.getElementById("zaman").innerText = new Date().toLocaleString();
+    }, 1000);
+  </script>
+</body>
+</html>
