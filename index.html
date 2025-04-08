@@ -14,7 +14,7 @@
     button { padding: 12px; font-size: 14px; border: none; border-radius: 6px; color: white; cursor: pointer; }
     button:hover { opacity: 0.9; }
     .footer-buttons { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
-    .footer-buttons button { flex: 1 1 32%; }
+    .footer-buttons button { flex: 1 1 25%; }
     table { width: 100%; border-collapse: collapse; background: white; margin-top: 15px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px; }
     #toplam { font-weight: bold; font-size: 16px; margin-top: 10px; text-align: right; }
@@ -27,7 +27,7 @@
     .top-row { display: flex; gap: 5px; flex-wrap: wrap; }
     .top-row .input-group { flex: 1; }
     .toolbox { margin-top: 20px; text-align: center; }
-    .toolbox button { margin: 5px; padding: 10px 20px; background-color: #343a40; }
+    .toolbox button { margin: 5px; padding: 10px 18px; background-color: #343a40; }
   </style>
 </head>
 <body>
@@ -59,7 +59,7 @@
     <textarea id="faturaNotu" placeholder="FATURA NOTU (İSTEĞE BAĞLI)"></textarea>
   </div>
 
-  <h4>ÜRÜN EKLE</h4>
+  <h4>SATIŞ İÇİN ÜRÜN EKLE</h4>
   <div class="input-group">
     <label for="urunAd">ÜRÜN ADI</label>
     <input type="text" id="urunAd" placeholder="ÜRÜN ADI" list="urunList">
@@ -74,6 +74,7 @@
       <option value="DETERJAN">
       <option value="YAĞ">
       <option value="PEYNİR">
+     <option value="GENEL ÜRÜN">
     </datalist>
   </div>
   <div class="input-group">
@@ -202,7 +203,7 @@
     function whatsapp() {
       const tel = document.getElementById("musteriTel").value;
       const ad = document.getElementById("musteriAd").value;
-      const mesaj = encodeURIComponent(`Merhaba ${ad}, faturanızı aşağıda bulabilirsiniz.`);
+      const mesaj = encodeURIComponent(`Merhaba ${ad}, SATIN ALDIGINIZ URUN BİLGİLERİNİ aşağıda bulabilirsiniz.`);
       const url = `https://wa.me/${tel}?text=${mesaj}`;
       window.open(url, '_blank');
     }
